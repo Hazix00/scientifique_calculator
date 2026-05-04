@@ -7,5 +7,8 @@ edition = "2024"
 eframe = "0.31"
 egui = "0.31"
 
+[build-dependencies]
+embed-resource = "2.4"
+
 [profile.release]
 opt-level = 2
