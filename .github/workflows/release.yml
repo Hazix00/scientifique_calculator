@@ -66,7 +66,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-binary
+          name: binary-${{ matrix.os }}
           path: ${{ matrix.asset_name }}
 
   release:
@@ -74,17 +74,30 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download all artifacts
+      - name: Download Linux binary
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
+          name: binary-ubuntu-latest
+          path: release-assets
 
-      - name: List downloaded files
-        run: ls -laR artifacts/
+      - name: Download Windows binary
+        uses: actions/download-artifact@v4
+        with:
+          name: binary-windows-latest
+          path: release-assets
+
+      - name: Download macOS binary
+        uses: actions/download-artifact@v4
+        with:
+          name: binary-macos-latest
+          path: release-assets
+
+      - name: Show release files
+        run: ls -la release-assets/
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           generate_release_notes: true
-          files: artifacts/**/*
+          files: release-assets/*
