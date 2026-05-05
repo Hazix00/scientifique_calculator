@@ -94,19 +94,29 @@ impl Calculator {
     pub fn equals(&mut self) {
         if self.error { return; }
         self.eval_pending_sci();
-        if let Some(pending) = self.pending_op {
-            let a = self.pending_value.unwrap_or(0.0);
-            let b = self.current_value();
-            let result = match pending {
-                '+' => a + b,
-                '-' => a - b,
-                '*' => a * b,
-                '/' => {
-                    if b == 0.0 { self.set_error(); return; }
-                    a / b
+        if self.pending_op.is_some() {
+            let result = if self.paren_stack.is_empty() {
+                // Top-level: evaluate full formula with proper precedence
+                evaluate_formula(&self.formula)
+            } else {
+                // Inside parens: evaluate simple accumulator
+                let a = self.pending_value.unwrap_or(0.0);
+                let b = self.current_value();
+                match self.pending_op.unwrap() {
+                    '+' => a + b,
+                    '-' => a - b,
+                    '*' => a * b,
+                    '/' => {
+                        if b == 0.0 { self.set_error(); return; }
+                        a / b
+                    }
+                    _ => b,
                 }
-                _ => b,
             };
+            if result.is_nan() || result.is_infinite() {
+                self.set_error();
+                return;
+            }
             self.display = format_number(result);
             self.pending_op = None;
             self.pending_value = None;
@@ -202,7 +212,6 @@ impl Calculator {
         self.after_equals = false;
     }
 
-    /// Evaluate any pending binary scientific operation (xʸ or ʸ√x).
     fn eval_pending_sci(&mut self) {
         if let Some((sci_op, base)) = self.pending_sci.take() {
             let exponent = self.current_value();
@@ -443,3 +452,6 @@ fn parse_atom(tokens: &[String], pos: usize) -> (f64, usize) {
         }
     }
 }
+
+#[cfg(test)]
+mod tests;
