@@ -28,15 +28,11 @@ A desktop scientific calculator built with Rust and egui/eframe.
 
 - [Rust](https://www.rust-lang.org/tools/install) (2024 edition)
 
-### Commands
-
-`ash
 # Debug build
 cargo run
 
 # Optimized release build
 cargo run --release
-`
 
 ## Usage
 
