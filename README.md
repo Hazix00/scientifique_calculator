@@ -57,19 +57,21 @@ cargo run --release
 
 ## Project Structure
 
-`
+```
 src/
 ├── main.rs                  # Entry point, eframe window setup
 ├── app.rs                   # eframe::App impl (UI layout + keyboard input)
 ├── calculator/
 │   ├── mod.rs               # Module root, exports Calculator + format_number
 │   ├── state.rs             # Calculator struct + SciOp enum + state mutation
+│   ├── state/
+│   │   └── tests.rs         # Unit tests for Calculator state
 │   └── ops.rs               # handle_basic() / handle_sci() button dispatchers
 └── ui/
     ├── mod.rs               # Module root
     ├── buttons.rs           # BtnKind enum, btn_colors, calc_button, rows
     └── display.rs           # render_display() — main number + formula line
-`
+```
 
 ## Tech Stack
 
